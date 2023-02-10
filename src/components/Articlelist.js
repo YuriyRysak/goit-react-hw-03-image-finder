@@ -1,15 +1,25 @@
 import axios from 'axios';
 
-axios.defaults.baseURL = "https://hn.algolia.com/api/v1";
+axios.defaults.baseURL = 'https://pixabay.com/api';
+axios.defaults.params = {
+  key: '32051710-2614f6ab005cb570915111ece',
+  image_type: 'photo',
+  orientation: 'horizontal',
+  per_page: 12,
+};
 
-export const ArticleList = ({ articles }) => (
+
+
+export const ArticleList = ({ images }) => (
   <ul>
-    {articles.map(({ objectID, url, title }) => (
-      <li key={objectID}>
-        <a href={url} target="_blank" rel="noreferrer noopener">
-          {title}
-        </a>
-      </li>
+    {images.map(({ id, webformatURL, tags, largeImageURL }) => (
+      <ArticleList
+        key={id}
+        src={webformatURL}
+        alt={tags}
+        largeImageURL={largeImageURL}
+        // openModal={openModal}
+      />
     ))}
   </ul>
 );
