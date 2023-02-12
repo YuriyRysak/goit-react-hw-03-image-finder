@@ -1,13 +1,17 @@
-import React, {Component} from "react";
+// import './ImageGalleryItem.css';
+import PropTypes from 'prop-types';
 
-
-export class ImageGalleryItem extends Component {
-  render() {
-    return (
-    <li class="gallery-item">
-    <img src={this.props.ImageGalleryItem}
-     alt="" />
+export const ImageGalleryItem = ({ src, alt, largeImageURL, openModal }) => {
+  return (
+    <li className="ImageGalleryItem" onClick={() => openModal(largeImageURL)}>
+      <img src={src} alt={alt} className="ImageGalleryItem-image" />
     </li>
-);
-  }
-}
+  );
+};
+
+ImageGalleryItem.propTypes = {
+  src: PropTypes.string,
+  alt: PropTypes.string,
+  largeImageURL: PropTypes.string,
+  openModal: PropTypes.func,
+};

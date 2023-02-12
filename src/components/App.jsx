@@ -1,47 +1,99 @@
 import React, { Component } from 'react';
-// import api from './services/api.js';
-// import {ArticleList} from './Articlelist.js'
-// import {Loader} from './Loader/Loader';
-// import axios from 'axios';
+import {ImagesService} from './services/api.js';
+import {Searchbar} from './Searchbar/Searchbar';
+import {Loader} from './Loader/Loader';
 
-// import {Searchbar} from './Searchbar/Searchbar';
-// import {ImageGallery} from './ImageGallery/ImageGallery';
+import {ImageGallery} from './ImageGallery/ImageGallery';
+import {Button} from './Button/Button';
 import {Modal} from './Modal/Modal.jsx';
-// import {ImageGalleryItem} from './ImageGalleryItem/ImageGalleryItem';
-// import { ImageGallery } from './ImageGallery/ImageGallery';
-// import {Button} from './Button/Button';
-// import { Loader } from './Loader/Loader';
+
+
+
+
+
+
 // import './styles.css';
-// import pixabay from '../components/pixabay.json'
+
 
 // import { ToastContainer } from 'react-toastify';
 // import 'react-toastify/dist/ReactToastify.css';
+
+
+
+
+
  export class App extends Component {
  
 
   state = {
-    articles: [],
+    searchImg: '',
+    images: [],
+    page: 1,
+    per_page: 12,    
     isLoading: false,
     error: null,
     showModal: false,
+    loadMore: false,
+    largeImageURL: 'largeImageURL',
+    id: null,
   };
 
- 
-  // async componentDidMount() {
-  //   this.setState({ isLoading: true });
+  
+   componentDidUpdate(_, prevState) {
+    console.log(prevState.page);
+    console.log(this.state.page);
+    const { searchImg, page } = this.state;
+    if (prevState.searchImg !== searchImg || prevState.page !== page) {
+      this.getImages(searchImg, page);
+    }
+  }
+    getImages = async (query, page) => {
+      this.setState({ isLoading: true });
+      if (!query) {
+        return;
+      }
 
-  //   try {
-  //     const response = await axios.get("/search?query=react");
-  //     this.setState({ articles: response.data.hits });
-  //   } catch (error) {
-  //     this.setState({ error });
-  //   } finally {
-  //     this.setState({ isLoading: false });
-  //   }
-  // }
-    imageModal = () => {
-      this.setState(({ showModal}) => ({
+      try {
+        const { hits, totalHits } = await ImagesService(query, page);
+        console.log(hits, totalHits);
+        this.setState(prevState => ({
+          images: [...prevState.images, ...hits],
+          loadMore: this.state.page < Math.ceil(totalHits / this.state.per_page),
+        }));
+      } catch (error) {
+        this.setState({ error });
+      } finally {
+        this.setState({ isLoading: false });
+      }
+    }
+    onFormSubmit = searchImg => {
+      // console.log(searchImg)
+      this.setState ({
+        searchImg,
+        images: [],
+        page: 1,
+        loadMore: false,
+      });
+      // console.log(query)
+     };
+
+    onloadMore = () => {
+      this.setState(prevState => ({ page: prevState.page + 1 }));
+      this.scrollOnMoreButton();
+    };
+  
+    // scrollOnMoreButton = () => {
+    //   animateScroll.scrollToBottom({
+    //     duration: 1000,
+    //     delay: 10,
+    //     smooth: 'linear',
+    //   });
+    // };
+  
+    imageModal = (largeImageURL) => {
+      this.setState(({ showModal, }) => ({
         showModal: !showModal,
+        largeImageURL: largeImageURL,
       }));
     }; 
     closeModal = () => {
@@ -51,22 +103,28 @@ import {Modal} from './Modal/Modal.jsx';
     };
   
     render() {
-      const { articles, isLoading, error, showModal } = this.state;
-      // console.log(articles);
+      const { images, isLoading, loadMore, showModal, page, largeImageURL } = this.state;
+      console.log(images);
   
       return (
         <div>
-          <button type='button' onClick={this.imageModal}>open Modal</button>
-          {showModal && (
-              <Modal onClose={this.closeModal}>
-              <p>open modal hi!</p>
-               <button type='button' onClick={this.imageModal}>close Modal</button>
-              </Modal>
-          )}
+          <Searchbar onSubmit={this.onFormSubmit}/>
+          {isLoading ? (
+          <Loader />
+        ) : (
+          <ImageGallery images={images} openModal={this.imageModal} />
+        )}
+
+        {loadMore && <Button onloadMore={this.onloadMore} page={page} />}
+
+         {showModal && (
+          <Modal largeImageURL={largeImageURL} onClose={this.closeModal} />
+        )} 
+          
           {/* {error && <p>Whoops, something went wrong: {error.message}</p>}
-          {isLoading && <Loader/>}
-          {articles.length > 0 && <ArticleList articles={articles} />} */}
-        </div>
+          {isLoading && <Loader/>} */}
+          
+        </div> 
       );
     }
   }
