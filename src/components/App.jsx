@@ -1,24 +1,10 @@
 import React, { Component } from 'react';
-import {ImagesService} from './services/api.js';
+import {ImagesService} from './services/api';
 import {Searchbar} from './Searchbar/Searchbar';
 import {Loader} from './Loader/Loader';
-
 import {ImageGallery} from './ImageGallery/ImageGallery';
 import {Button} from './Button/Button';
 import {Modal} from './Modal/Modal.jsx';
-
-
-
-
-
-
-// import './styles.css';
-
-
-// import { ToastContainer } from 'react-toastify';
-// import 'react-toastify/dist/ReactToastify.css';
-
-
 
 
 
@@ -40,8 +26,8 @@ import {Modal} from './Modal/Modal.jsx';
 
   
    componentDidUpdate(_, prevState) {
-    console.log(prevState.page);
-    console.log(this.state.page);
+    // console.log(prevState.page);
+    // console.log(this.state.page);
     const { searchImg, page } = this.state;
     if (prevState.searchImg !== searchImg || prevState.page !== page) {
       this.getImages(searchImg, page);
@@ -55,7 +41,7 @@ import {Modal} from './Modal/Modal.jsx';
 
       try {
         const { hits, totalHits } = await ImagesService(query, page);
-        console.log(hits, totalHits);
+        // console.log(hits, totalHits);
         this.setState(prevState => ({
           images: [...prevState.images, ...hits],
           loadMore: this.state.page < Math.ceil(totalHits / this.state.per_page),
@@ -81,15 +67,7 @@ import {Modal} from './Modal/Modal.jsx';
       this.setState(prevState => ({ page: prevState.page + 1 }));
       this.scrollOnMoreButton();
     };
-  
-    // scrollOnMoreButton = () => {
-    //   animateScroll.scrollToBottom({
-    //     duration: 1000,
-    //     delay: 10,
-    //     smooth: 'linear',
-    //   });
-    // };
-  
+    
     imageModal = (largeImageURL) => {
       this.setState(({ showModal, }) => ({
         showModal: !showModal,
@@ -104,8 +82,7 @@ import {Modal} from './Modal/Modal.jsx';
   
     render() {
       const { images, isLoading, loadMore, showModal, page, largeImageURL } = this.state;
-      console.log(images);
-  
+        
       return (
         <div>
           <Searchbar onSubmit={this.onFormSubmit}/>

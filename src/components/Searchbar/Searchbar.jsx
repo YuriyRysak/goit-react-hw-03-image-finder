@@ -20,7 +20,7 @@ export class Searchbar extends Component {
         event.preventDefault();
 
         if(this.state.searchImg.trim() === '') {
-            return alert('Введите запрос!');
+            return alert('Please enter something!');
         }
         this.props.onSubmit(this.state.searchImg);
         this.setState({ searchImg: ''});
@@ -31,17 +31,17 @@ export class Searchbar extends Component {
     };
     render() {
         return(
-            <header class="searchbar">
-                <form onSubmit={this.handleSubmit} class="SearchForm">
-                    <button type="submit" class="SearchForm-button">
-                    <span class="button-label">Search</span>
+            <header className="Searchbar">
+                <form onSubmit={this.handleSubmit} className="SearchForm">
+                    <button type="submit" className="SearchForm-button">
+                    <span class="button-label"></span>
                     </button>
 
                     <input
                     class="SearchForm-input "
                     type="text"
                     autocomplete="off"
-                    autofocus='on'
+                    autofocus
                     placeholder="Search images and photos"
                     value={this.state.searchImg}
                     onChange={this.handleImageChange}
